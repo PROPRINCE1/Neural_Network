@@ -157,7 +157,7 @@ def main():
 
 
     x = mnist.data
-    x /= 255.0
+    x = x/255.0
 
     y = mnist.target.astype(int)
     y_onehot = np.eye(10)[y]
