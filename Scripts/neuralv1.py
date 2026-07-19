@@ -1,6 +1,6 @@
 """
 Neural Network v1.0
-Author: ...
+Author: Abdullah Irshad
 """
 
 import numpy as np
