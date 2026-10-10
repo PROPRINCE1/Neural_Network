@@ -1,5 +1,5 @@
 """
-Neural Network v1.0
+Neural Network v1.1
 Author: Abdullah Irshad
 """
 
@@ -46,6 +46,7 @@ class Neuron:
         self.activation = self.sigmoid(self.z)
 
         return self.activation
+    
 
     def gradient_step(self,lr):
 
@@ -54,14 +55,14 @@ class Neuron:
         # dL/dw = delta * input
         self.weights -= lr * self.delta * self.inputs
         self.bias -= lr * self.delta
-
+        
 class Network:
     """Simple fully-connected feedforward neural network."""
-    def __init__(self,architecture=[2,5,5,1]):
+    def __init__(self,architecture=np.array([2,5,5,1])):
 
         # self.net is a list of layers.
         # Each layer is a list of Neuron objects.
-        self.net = []
+        self.net = np.empty(len(architecture) - 1, dtype=object)
         for i in range(1, len(architecture)):
             inputs = architecture[i - 1]
             neurons = architecture[i]
@@ -71,24 +72,24 @@ class Network:
             for _ in range(neurons):
                 layer.append(Neuron(inputs))
 
-            self.net.append(layer)
+            self.net[i-1] = layer
 
-    def forward_pass(self,inputs):
-
+    def forward_pass(self, inputs):
+        
         # Store activations of every layer.
         # activations[0] is the network input.
-        self.activations = [inputs]
-
+        self.activations = [np.asarray(inputs).ravel()]
+    
         for layer in self.net:
-            outputs = []
-
+            outputs = np.empty(len(layer), dtype=float)
+    
             # Every neuron in the layer receives
             # the previous layer's activations.
-            for neuron in layer:
-                outputs.append(neuron.forward(self.activations[-1]))
-
+            for i, neuron in enumerate(layer):
+                outputs[i] = neuron.forward(self.activations[-1])
+    
             self.activations.append(outputs)
-
+    
         return self.activations
     
     def backward_pass(self, target,lr):
@@ -148,8 +149,7 @@ class Network:
 
             accuracy = correct / len(X)
 
-            print(f"Epoch {epoch}: Loss = {loss:.2f}, Train_Accuracy = {accuracy*100:.2f}%")
-
+            print(f"Epoch {epoch+1}: Loss = {loss:.2f}, Train_Accuracy = {accuracy*100:.2f}%")
             
 def main():
     print("Importing Data set")
